@@ -1,0 +1,53 @@
+# .NET build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# ASP.NET Scaffolding
+ScaffoldingReadMe.txt
+
+# Logs
+*.log
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+
+# Others
+*.swp
+*.bak
+*.tmp
+*.vspscc
+*.vssscc
+
+# Publish output
+publish/
+
+# Test results
+TestResults/
+
+# Local secrets
+secrets.json
+
+# GitHub Copilot (if any Copilot Labs or Copilot-specific files are generated)
+.copilot/
+.copilot.json
+
+# Visual Studio folder
+.vs/
