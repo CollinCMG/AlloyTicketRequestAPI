@@ -20,23 +20,37 @@ namespace AlloyTicketRequestApi.Services
         }
         public async Task<IActionResult> ProcessRequestAsync(RequestActionPayload request)
         {
-            AlloyToken? token;
-            try
+            var (flowControl, value, token) = await AuthenticateWithAlloy();
+            if (!flowControl)
             {
-                token = await _alloyService.AuthenticateWithAlloyAsync();
-                if (token == null || token.access_token == null)
-                {
-                    return new StatusCodeResult(500);
-                }
-            }
-            catch (Exception ex)
-            {
-                return new BadRequestObjectResult("Unable to retrieve access token from Alloy. " + ex.Message);
+                return value;
             }
 
             try
             {
-                await _alloyService.CreateAlloyRequestAsync(token.access_token, request);
+                if (request.Type == null)
+                {
+                    return new BadRequestObjectResult("Type must be set");
+                }
+
+                if (request.Type == RequestType.Service)
+                {
+                    await _alloyService.CreateAlloyServiceRequestAsync(token.access_token, request);
+
+                }
+                else if (request.Type == RequestType.Support)
+                {
+                    if (request.ActionId == null)
+                    {
+                        return new BadRequestObjectResult("Invalid action id");
+                    }
+
+                    await _alloyService.CreateAlloySupportRequestAsync(token.access_token, request);
+                }
+                else
+                {
+                    return new BadRequestObjectResult("Invalid request type");
+                }
             }
             catch (Exception ex)
             {
@@ -44,6 +58,23 @@ namespace AlloyTicketRequestApi.Services
             }
 
             return new OkObjectResult("");
+        }
+
+        private async Task<(bool flowControl, IActionResult? value, AlloyToken? token)> AuthenticateWithAlloy()
+        {
+            try
+            {
+                var token = await _alloyService.AuthenticateWithAlloyAsync();
+                if (token == null || token.access_token == null)
+                {
+                    return (flowControl: false, value: new StatusCodeResult(500), token: null);
+                }
+                return (flowControl: true, value: null, token: token);
+            }
+            catch (Exception ex)
+            {
+                return (flowControl: false, value: new BadRequestObjectResult("Unable to retrieve access token from Alloy. " + ex.Message), token: null);
+            }
         }
     }
 }

@@ -18,7 +18,7 @@ namespace AlloyTicketRequestApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] RequestActionPayload request)
+        public async Task<IActionResult> CreateRequestAsync([FromBody] RequestActionPayload request)
         {
             if (request == null)
             {
