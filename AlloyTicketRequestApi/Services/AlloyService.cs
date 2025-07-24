@@ -51,7 +51,7 @@ namespace AlloyTicketRequestApi.Services
             }
         }
 
-        public async Task<bool> CreateAlloyNewHireRequestAsync(string accessToken, RequestActionPayload request)
+        public async Task<bool> CreateAlloyRequestAsync(string accessToken, RequestActionPayload request)
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
@@ -88,96 +88,11 @@ namespace AlloyTicketRequestApi.Services
             {
                 string errorCode = Convert.ToString(respObj.errorCode) ?? string.Empty;
                 string errorText = Convert.ToString(respObj.errorText) ?? string.Empty;
-                _logger.LogError("Creation unsuccessful. ({ErrorCode}) {ErrorText}", errorCode, errorText);
-                throw new Exception("Creation unsuccessful. (" + errorCode + ") " + errorText);
+                _logger.LogError("Request unsuccessful. ({ErrorCode}) {ErrorText}", errorCode, errorText);
+                throw new Exception("Request unsuccessful. (" + errorCode + ") " + errorText);
             }
 
             return true;
-        }
-
-        public async Task<bool?> CreateAlloyAttachmentRequestAsync(string accessToken, RequestActionPayload request)
-        {
-            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-            // Parse attachments from request.Data (handle both array and object-with-array cases)
-            var attachments = new List<object>();
-            if (request.Data.ValueKind == System.Text.Json.JsonValueKind.Array)
-            {
-                foreach (var element in request.Data.EnumerateArray())
-                {
-                    if (element.ValueKind == System.Text.Json.JsonValueKind.Object && element.TryGetProperty("FileName", out var fileNameProp))
-                    {
-                        string fileName = fileNameProp.GetString() ?? string.Empty;
-                        string description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() ?? string.Empty : string.Empty;
-                        string base64Data = element.TryGetProperty("Data", out var dataProp) ? dataProp.GetString() ?? string.Empty : string.Empty;
-                        byte[] dataBytes = Convert.FromBase64String(base64Data);
-
-                        attachments.Add(new
-                        {
-                            FileName = fileName,
-                            Description = description,
-                            Data = dataBytes
-                        });
-                    }
-                }
-            }
-            else if (request.Data.ValueKind == System.Text.Json.JsonValueKind.Object)
-            {
-                foreach (var property in request.Data.EnumerateObject())
-                {
-                    if (property.Value.ValueKind == System.Text.Json.JsonValueKind.Array)
-                    {
-                        foreach (var element in property.Value.EnumerateArray())
-                        {
-                            if (element.ValueKind == System.Text.Json.JsonValueKind.Object && element.TryGetProperty("FileName", out var fileNameProp))
-                            {
-                                string fileName = fileNameProp.GetString() ?? string.Empty;
-                                string description = element.TryGetProperty("Description", out var descProp) ? descProp.GetString() ?? string.Empty : string.Empty;
-                                string base64Data = element.TryGetProperty("Data", out var dataProp) ? dataProp.GetString() ?? string.Empty : string.Empty;
-                                byte[] dataBytes = Convert.FromBase64String(base64Data);
-
-                                attachments.Add(new
-                                {
-                                    FileName = fileName,
-                                    Description = description,
-                                    Data = dataBytes
-                                });
-                            }
-                        }
-                    }
-                }
-            }
-
-            string jsonToSend = JsonConvert.SerializeObject(attachments);
-            StringContent fileContent = new StringContent(jsonToSend);
-            fileContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            try
-            {
-                bool success = false;
-                using (var response = await _client.PutAsync(
-                    _config.GetSection("Alloy")["BaseUrl"] + "/api/v2/Object/" + request.ObjectId + "/Attachments",
-                    fileContent))
-                {
-                    string apiResponse = await response.Content.ReadAsStringAsync();
-                    dynamic? respObj = JsonConvert.DeserializeObject(apiResponse);
-
-                    if (respObj != null)
-                    {
-                        success = respObj.success;
-                    }
-                }
-
-                if (!success)
-                {
-                    return null;
-                }
-                return true;
-            }
-            catch
-            {
-                return null;
-            }
         }
     }
 }

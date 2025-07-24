@@ -36,11 +36,11 @@ namespace AlloyTicketRequestApi.Services
 
             try
             {
-                await _alloyService.CreateAlloyNewHireRequestAsync(token.access_token, request);
+                await _alloyService.CreateAlloyRequestAsync(token.access_token, request);
             }
             catch (Exception ex)
             {
-                return new BadRequestObjectResult("Error creating Alloy New Hire Service Request. " + ex.Message);
+                return new BadRequestObjectResult("Error creating Alloy service request. " + ex.Message);
             }
 
             return new OkObjectResult("");
