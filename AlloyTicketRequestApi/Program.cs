@@ -1,6 +1,10 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using AlloyTicketRequestApi.Services;
+using AlloyTicketRequestApi.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,9 +30,18 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Add DbContext
+builder.Services.AddDbContext<AlloyNavigatorDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AlloyNavigator")));
+
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 builder.Services.AddScoped<AlloyTicketRequestApi.Services.IRequestService, AlloyTicketRequestApi.Services.RequestService>();
+builder.Services.AddScoped<IFormFieldService, FormFieldService>();
 builder.Services.AddHttpClient<AlloyTicketRequestApi.Services.AlloyService>(client =>
 {
     // Log outgoing requests
