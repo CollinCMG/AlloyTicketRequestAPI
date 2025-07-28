@@ -116,17 +116,6 @@ namespace AlloyTicketRequestApi.Services
             // Inject or override Requester_ID
             fieldsObj["Requester_ID"] = request.Requester_ID == null ? null : new Newtonsoft.Json.Linq.JValue(request.Requester_ID);
 
-            // Check and set default for Type
-            if (!fieldsObj.TryGetValue("Type", out var typeToken) || typeToken == null || string.IsNullOrWhiteSpace(typeToken.ToString()))
-            {
-                fieldsObj["Type"] = "Unspecified";
-            }
-
-            // Check and set default for Category
-            if (!fieldsObj.TryGetValue("Category", out var categoryToken) || categoryToken == null || string.IsNullOrWhiteSpace(categoryToken.ToString()))
-            {
-                fieldsObj["Category"] = "Miscellaneous";
-            }
 
             var newTicket = new AlloyNewTicket
             {
