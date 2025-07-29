@@ -1,13 +1,11 @@
-using AlloyTicketRequestApi.Models;
 using AlloyTicketRequestApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Threading.Tasks;
 
 namespace AlloyTicketRequestApi.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("formfields")]
     public class FormFieldController : ControllerBase
     {
