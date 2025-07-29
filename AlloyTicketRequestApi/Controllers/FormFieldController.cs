@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace AlloyTicketRequestApi.Controllers
 {
     [ApiController]
-    [Authorize]
     [Route("formfields")]
+    [Authorize]
     public class FormFieldController : ControllerBase
     {
         private readonly IFormFieldService _formFieldService;
