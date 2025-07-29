@@ -34,7 +34,7 @@ namespace AlloyTicketRequestApi.Services
                 using (var response = await _client.PostAsync(_config.GetSection("Alloy")["BaseUrl"] + "/API/token", authContent))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
-                    token = JsonConvert.DeserializeObject<AlloyToken>(apiResponse);
+                    token = System.Text.Json.JsonSerializer.Deserialize<AlloyToken>(apiResponse);
                 }
 
                 if (token == null)
