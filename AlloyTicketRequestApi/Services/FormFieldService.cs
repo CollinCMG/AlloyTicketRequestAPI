@@ -333,13 +333,6 @@ namespace AlloyTicketRequestApi.Services
             return options;
         }
 
-        public async Task<List<DropdownOptionDto>> GetDropdownOptionsAsync(FormFieldDto field)
-        {
-            if (field == null)
-                return new List<DropdownOptionDto>();
-            return await GetDropdownOptionsAsync(field.TableName, field.DisplayFields, field.Filter);
-        }
-
         /// <summary>
         /// Finds a FormFieldDto by fieldId from a list of PageDto (in-memory, no SQL).
         /// </summary>

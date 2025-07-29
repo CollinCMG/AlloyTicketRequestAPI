@@ -57,18 +57,5 @@ namespace AlloyTicketRequestApi.Controllers
             var pages = await concreteService.GetFormPagesAsync(formId);
             return Ok(pages);
         }
-
-        [HttpGet("dropdown-options")]
-        public async Task<IActionResult> GetDropdownOptions([FromBody] FormFieldDto field)
-        {
-            if (field == null)
-                return BadRequest("Field must be provided.");
-
-            if (_formFieldService is not Services.FormFieldService concreteService)
-                return StatusCode(500, "Service implementation error.");
-
-            var options = await concreteService.GetDropdownOptionsAsync(field);
-            return Ok(options);
-        }
     }
 }
