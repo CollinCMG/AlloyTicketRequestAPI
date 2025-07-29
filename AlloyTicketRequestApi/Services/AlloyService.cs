@@ -99,7 +99,6 @@ namespace AlloyTicketRequestApi.Services
         {
             _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
 
-            // Always use JObject for dynamic fields
             Newtonsoft.Json.Linq.JObject fieldsObj;
             if (request.Data.ValueKind == System.Text.Json.JsonValueKind.Object)
             {
@@ -113,9 +112,9 @@ namespace AlloyTicketRequestApi.Services
                     ["Data"] = request.Data.ToString()
                 };
             }
+
             // Inject or override Requester_ID
             fieldsObj["Requester_ID"] = request.Requester_ID == null ? null : new Newtonsoft.Json.Linq.JValue(request.Requester_ID);
-
 
             var newTicket = new AlloyNewTicket
             {

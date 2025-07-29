@@ -4,7 +4,6 @@ namespace AlloyTicketRequestApi.Services
 {
     public class FormDataMapperService
     {
-
         public static (string? Text, string? Url) GetTextAndUrl(string? elementDefinition)
         {
             if (string.IsNullOrWhiteSpace(elementDefinition))

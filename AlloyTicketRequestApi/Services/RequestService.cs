@@ -35,7 +35,7 @@ namespace AlloyTicketRequestApi.Services
 
                 if (request.Type == RequestType.Service)
                 {
-                    await _alloyService.CreateAlloyServiceRequestAsync(token.access_token, request);
+                    await _alloyService.CreateAlloyServiceRequestAsync(token.AccessToken, request);
 
                 }
                 else if (request.Type == RequestType.Support)
@@ -45,7 +45,7 @@ namespace AlloyTicketRequestApi.Services
                         return new BadRequestObjectResult("Invalid action id");
                     }
 
-                    await _alloyService.CreateAlloySupportRequestAsync(token.access_token, request);
+                    await _alloyService.CreateAlloySupportRequestAsync(token.AccessToken, request);
                 }
                 else
                 {
@@ -65,7 +65,7 @@ namespace AlloyTicketRequestApi.Services
             try
             {
                 var token = await _alloyService.AuthenticateWithAlloyAsync();
-                if (token == null || token.access_token == null)
+                if (token == null || token.AccessToken == null)
                 {
                     return (flowControl: false, value: new StatusCodeResult(500), token: null);
                 }
